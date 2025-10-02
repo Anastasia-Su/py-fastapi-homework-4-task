@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import Any
 
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
 
@@ -46,6 +47,8 @@ class Settings(BaseAppSettings):
     SECRET_KEY_ACCESS: str = os.getenv("SECRET_KEY_ACCESS", os.urandom(32))
     SECRET_KEY_REFRESH: str = os.getenv("SECRET_KEY_REFRESH", os.urandom(32))
     JWT_SIGNING_ALGORITHM: str = os.getenv("JWT_SIGNING_ALGORITHM", "HS256")
+
+    model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
 class TestingSettings(BaseAppSettings):
