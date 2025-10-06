@@ -65,7 +65,7 @@ async def create_profile(
             validate_gender(gender)
         if date_of_birth:
             validate_birth_date(date_of_birth)
-        if info and not info.strip():
+        if info is not None and not info.strip():
             raise ValueError("Info field cannot be empty or contain only spaces.")
         if avatar:
             validate_image(avatar)
