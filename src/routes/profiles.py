@@ -52,26 +52,6 @@ async def create_profile(
     s3_client: S3StorageInterface = Depends(get_s3_storage_client),
     current_user_id: int = Depends(get_current_user),
 ):
-
-    # try:
-    #     if first_name:
-    #         validate_name(first_name)
-    #     if last_name:
-    #         validate_name(last_name)
-    #     if gender:
-    #         validate_gender(gender)
-    #     if date_of_birth:
-    #         validate_birth_date(date_of_birth)
-    #     if info is not None and not info.strip():
-    #         raise ValueError("Info field cannot be empty or contain only spaces.")
-    #     if avatar:
-    #         validate_image(avatar)
-
-    # except ValueError as e:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-    #         detail=str(e),
-    #     )
     try:
         await validate_profile_data(
             first_name, last_name, gender, date_of_birth, info, avatar
@@ -161,7 +141,7 @@ async def create_profile(
 
     profile_data = ProfileResponseSchema.model_validate(new_profile)
 
-    if new_profile.avatar:
-        profile_data.avatar = await get_avatar_presigned_url(new_profile.avatar)
+    # if new_profile.avatar:
+    #     profile_data.avatar = await get_avatar_presigned_url(new_profile.avatar)
 
     return profile_data

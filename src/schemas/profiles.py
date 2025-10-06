@@ -4,7 +4,9 @@ from typing import Optional
 from fastapi import Form
 from pydantic import BaseModel, field_serializer, ConfigDict
 
+# from database.models.accounts import GenderEnum
 from config import get_settings
+from routes.utils import get_avatar_presigned_url
 
 settings = get_settings()
 
@@ -23,3 +25,10 @@ class ProfileResponseSchema(ProfileBaseSchema):
     avatar: Optional[str] = None
 
     model_config: ConfigDict = ConfigDict(from_attributes=True)
+
+    @field_serializer("avatar")
+    def serialize_avatar(self, avatar: str, _info):
+        if not avatar:
+            return None
+
+        return f"http://{settings.S3_STORAGE_HOST}:{settings.S3_STORAGE_PORT}/{settings.S3_BUCKET_NAME}/{avatar}"
