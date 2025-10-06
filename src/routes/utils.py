@@ -5,6 +5,12 @@ from security.interfaces import JWTAuthManagerInterface
 from exceptions import BaseSecurityError, TokenExpiredError, InvalidTokenError
 from config import get_jwt_auth_manager, get_settings, BaseAppSettings
 from security import get_token
+from validation import (
+    validate_name,
+    validate_image,
+    validate_gender,
+    validate_birth_date,
+)
 
 
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -62,3 +68,21 @@ async def get_avatar_presigned_url(file_name: str):
             ExpiresIn=3600,
         )
         return url
+
+
+async def validate_profile_data(
+    first_name, last_name, gender, date_of_birth, info, avatar
+):
+    """Validate input fields and image."""
+    if first_name:
+        validate_name(first_name)
+    if last_name:
+        validate_name(last_name)
+    if gender:
+        validate_gender(gender)
+    if date_of_birth:
+        validate_birth_date(date_of_birth)
+    if info is not None and not info.strip():
+        raise ValueError("Info field cannot be empty or contain only spaces.")
+    if avatar:
+        validate_image(avatar)

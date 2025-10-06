@@ -16,17 +16,18 @@ from schemas import ProfileResponseSchema
 from storages import S3StorageInterface
 from config import get_s3_storage_client
 
-from .utils import get_current_user, get_avatar_presigned_url
+from .utils import get_current_user, get_avatar_presigned_url, validate_profile_data
 
 from fastapi import UploadFile, File, Form
 from typing import Optional
 from datetime import date
-from validation import (
-    validate_name,
-    validate_image,
-    validate_gender,
-    validate_birth_date,
-)
+
+# from validation import (
+#     validate_name,
+#     validate_image,
+#     validate_gender,
+#     validate_birth_date,
+# )
 
 
 router = APIRouter()
@@ -52,24 +53,32 @@ async def create_profile(
     current_user_id: int = Depends(get_current_user),
 ):
 
-    try:
-        if first_name:
-            validate_name(first_name)
-        if last_name:
-            validate_name(last_name)
-        if gender:
-            validate_gender(gender)
-        if date_of_birth:
-            validate_birth_date(date_of_birth)
-        if info is not None and not info.strip():
-            raise ValueError("Info field cannot be empty or contain only spaces.")
-        if avatar:
-            validate_image(avatar)
+    # try:
+    #     if first_name:
+    #         validate_name(first_name)
+    #     if last_name:
+    #         validate_name(last_name)
+    #     if gender:
+    #         validate_gender(gender)
+    #     if date_of_birth:
+    #         validate_birth_date(date_of_birth)
+    #     if info is not None and not info.strip():
+    #         raise ValueError("Info field cannot be empty or contain only spaces.")
+    #     if avatar:
+    #         validate_image(avatar)
 
+    # except ValueError as e:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+    #         detail=str(e),
+    #     )
+    try:
+        await validate_profile_data(
+            first_name, last_name, gender, date_of_birth, info, avatar
+        )
     except ValueError as e:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=str(e),
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
         )
 
     stmt_current = (
@@ -150,7 +159,6 @@ async def create_profile(
             detail=str(e),
         ) from e
 
-    
     profile_data = ProfileResponseSchema.model_validate(new_profile)
 
     if new_profile.avatar:
