@@ -6,7 +6,7 @@ import pytest
 import httpx
 from bs4 import BeautifulSoup
 
-from src.database import (
+from database import (
     ActivationTokenModel,
     UserModel,
     RefreshTokenModel,

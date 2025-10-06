@@ -1,10 +1,10 @@
 import aioboto3
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer
-from src.security.interfaces import JWTAuthManagerInterface
-from src.exceptions import BaseSecurityError, TokenExpiredError, InvalidTokenError
-from src.config import get_jwt_auth_manager, get_settings, BaseAppSettings
-from src.security import get_token
+from security.interfaces import JWTAuthManagerInterface
+from exceptions import BaseSecurityError, TokenExpiredError, InvalidTokenError
+from config import get_jwt_auth_manager, get_settings, BaseAppSettings
+from security import get_token
 
 
 bearer_scheme = HTTPBearer(auto_error=False)

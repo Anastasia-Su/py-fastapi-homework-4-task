@@ -5,27 +5,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 
-from src.database import (
+from database import (
     get_db,
     UserModel,
     UserProfileModel,
 )
-from src.exceptions import S3FileUploadError
-from src.schemas import ProfileResponseSchema
+from exceptions import S3FileUploadError
+from schemas import ProfileResponseSchema
 
-from src.storages import S3StorageInterface
-from src.config import get_s3_storage_client
+from storages import S3StorageInterface
+from config import get_s3_storage_client
 
 from .utils import get_current_user, get_avatar_presigned_url
 
 from fastapi import UploadFile, File, Form
 from typing import Optional
 from datetime import date
-
-# from database.models.accounts import GenderEnum
-
-
-from src.validation import (
+from validation import (
     validate_name,
     validate_image,
     validate_gender,
@@ -65,7 +61,7 @@ async def create_profile(
             validate_gender(gender)
         if date_of_birth:
             validate_birth_date(date_of_birth)
-        if not info.strip():
+        if info is not None and not info.strip():
             raise ValueError("Info field cannot be empty or contain only spaces.")
         if avatar:
             validate_image(avatar)
@@ -114,12 +110,12 @@ async def create_profile(
             detail="User already has a profile.",
         )
 
+    filename = None
     if avatar:
         try:
             file_bytes = await avatar.read()
             filename = f"avatars/{user_id}_avatar.jpg"
             await s3_client.upload_file(filename, file_bytes)
-            await get_avatar_presigned_url(filename)
 
         except S3FileUploadError:
             raise HTTPException(
@@ -136,8 +132,8 @@ async def create_profile(
     try:
         new_profile = UserProfileModel(
             user_id=user_id,
-            first_name=first_name.lower(),
-            last_name=last_name.lower(),
+            first_name=first_name.lower() if first_name else None,
+            last_name=last_name.lower() if last_name else None,
             gender=gender,
             date_of_birth=date_of_birth,
             info=info,

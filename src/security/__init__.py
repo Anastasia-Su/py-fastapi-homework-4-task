@@ -1,1 +1,1 @@
-from src.security.http import get_token
+from security.http import get_token

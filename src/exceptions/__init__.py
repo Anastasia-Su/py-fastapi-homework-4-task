@@ -1,10 +1,10 @@
-from src.exceptions.security import (
+from exceptions.security import (
     BaseSecurityError,
     InvalidTokenError,
     TokenExpiredError
 )
-from src.exceptions.email import BaseEmailError
-from src.exceptions.storage import (
+from exceptions.email import BaseEmailError
+from exceptions.storage import (
     BaseS3Error,
     S3ConnectionError,
     S3BucketNotFoundError,

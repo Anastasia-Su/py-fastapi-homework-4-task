@@ -1,11 +1,10 @@
 from datetime import date
 from typing import Optional
 
-from fastapi import UploadFile, Form, File
-from pydantic import BaseModel, field_validator, field_serializer, ConfigDict
-from src.database.models.accounts import GenderEnum
-from src.config import get_settings
-
+from fastapi import Form
+from pydantic import BaseModel, field_serializer, ConfigDict
+from database.models.accounts import GenderEnum
+from config import get_settings
 
 settings = get_settings()
 

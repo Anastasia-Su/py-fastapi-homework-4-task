@@ -8,13 +8,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from src.config import (
+from config import (
     get_jwt_auth_manager,
     get_settings,
     BaseAppSettings,
     get_accounts_email_notificator,
 )
-from src.database import (
+from database import (
     get_db,
     UserModel,
     UserGroupModel,
@@ -23,9 +23,9 @@ from src.database import (
     PasswordResetTokenModel,
     RefreshTokenModel,
 )
-from src.exceptions import BaseSecurityError
-from src.notifications import EmailSenderInterface
-from src.schemas import (
+from exceptions import BaseSecurityError
+from notifications import EmailSenderInterface
+from schemas import (
     UserRegistrationRequestSchema,
     UserRegistrationResponseSchema,
     MessageResponseSchema,
@@ -37,7 +37,7 @@ from src.schemas import (
     TokenRefreshRequestSchema,
     TokenRefreshResponseSchema,
 )
-from src.security.interfaces import JWTAuthManagerInterface
+from security.interfaces import JWTAuthManagerInterface
 
 router = APIRouter()
 
