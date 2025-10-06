@@ -65,7 +65,7 @@ async def create_profile(
             validate_gender(gender)
         if date_of_birth:
             validate_birth_date(date_of_birth)
-        if not info.strip():
+        if info and not info.strip():
             raise ValueError("Info field cannot be empty or contain only spaces.")
         if avatar:
             validate_image(avatar)
@@ -114,12 +114,12 @@ async def create_profile(
             detail="User already has a profile.",
         )
 
+    filename = None
     if avatar:
         try:
             file_bytes = await avatar.read()
             filename = f"avatars/{user_id}_avatar.jpg"
             await s3_client.upload_file(filename, file_bytes)
-            await get_avatar_presigned_url(filename)
 
         except S3FileUploadError:
             raise HTTPException(
@@ -136,8 +136,8 @@ async def create_profile(
     try:
         new_profile = UserProfileModel(
             user_id=user_id,
-            first_name=first_name.lower(),
-            last_name=last_name.lower(),
+            first_name=first_name.lower() if first_name else None,
+            last_name=last_name.lower() if last_name else None,
             gender=gender,
             date_of_birth=date_of_birth,
             info=info,
