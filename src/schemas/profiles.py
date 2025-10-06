@@ -2,8 +2,9 @@ from datetime import date
 from typing import Optional
 
 from fastapi import UploadFile, Form, File, HTTPException
-from pydantic import BaseModel, field_validator, HttpUrl, ConfigDict
+from pydantic import BaseModel, field_validator,  field_serializer, HttpUrl, ConfigDict
 from src.database.models.accounts import GenderEnum
+from src.config import get_settings
 
 from src.validation import (
     validate_name,
@@ -12,14 +13,19 @@ from src.validation import (
     validate_birth_date
 )
 
+
+settings = get_settings()
+
+
 class ProfileBaseSchema(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    gender: Optional[GenderEnum] = None
-    date_of_birth: Optional[date] = None
-    info: Optional[str] = None
+    first_name: Optional[str] = Form(None)
+    last_name: Optional[str] = Form(None)
+    gender: Optional[GenderEnum] = Form(None)
+    date_of_birth: Optional[date] = Form(None)
+    info: Optional[str] = Form(None)
     
 class ProfileRequestSchema(ProfileBaseSchema):
+  
     avatar: Optional[UploadFile] = File(None)
     
     @field_validator("first_name")
@@ -66,3 +72,9 @@ class ProfileResponseSchema(ProfileBaseSchema):
     avatar: Optional[str] = None
     
     model_config: ConfigDict = ConfigDict(from_attributes=True)
+    
+    @field_serializer("avatar")
+    def serialize_avatar(self, avatar: str, _info):
+        if not avatar:
+            return None
+        return f"http://{settings.S3_STORAGE_HOST}:{settings.S3_STORAGE_PORT}/{settings.S3_BUCKET_NAME}/{avatar}"
