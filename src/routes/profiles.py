@@ -49,7 +49,7 @@ async def create_profile(
     avatar: Optional[UploadFile] = File(None),
     db: AsyncSession = Depends(get_db),
     s3_client: S3StorageInterface = Depends(get_s3_storage_client),
-    current_user_id: UserModel = Depends(get_current_user),
+    current_user_id: int = Depends(get_current_user),
 ):
 
     try:
@@ -150,4 +150,10 @@ async def create_profile(
             detail=str(e),
         ) from e
 
-    return ProfileResponseSchema.model_validate(new_profile)
+    
+    profile_data = ProfileResponseSchema.model_validate(new_profile)
+
+    if new_profile.avatar:
+        profile_data.avatar = await get_avatar_presigned_url(new_profile.avatar)
+
+    return profile_data
