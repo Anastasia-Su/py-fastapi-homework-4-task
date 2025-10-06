@@ -22,7 +22,7 @@ from fastapi import UploadFile, File, Form
 from typing import Optional
 from datetime import date
 
-from database.models.accounts import GenderEnum
+# from database.models.accounts import GenderEnum
 
 
 from validation import (
@@ -47,7 +47,7 @@ async def create_profile(
     user_id: int,
     first_name: Optional[str] = Form(None),
     last_name: Optional[str] = Form(None),
-    gender: Optional[GenderEnum] = Form(None),
+    gender: Optional[str] = Form(None),
     date_of_birth: Optional[date] = Form(None),
     info: Optional[str] = Form(None),
     avatar: Optional[UploadFile] = File(None),
