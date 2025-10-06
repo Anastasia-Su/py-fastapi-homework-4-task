@@ -1,11 +1,11 @@
-from src.schemas.movies import (
+from schemas.movies import (
     MovieDetailSchema,
     MovieListResponseSchema,
     MovieListItemSchema,
     MovieCreateSchema,
     MovieUpdateSchema
 )
-from src.schemas.accounts import (
+from schemas.accounts import (
     UserRegistrationRequestSchema,
     UserRegistrationResponseSchema,
     UserActivationRequestSchema,
@@ -18,8 +18,8 @@ from src.schemas.accounts import (
     TokenRefreshResponseSchema
 )
 
-from src.schemas.profiles import (
-    ProfileRequestSchema,
+from schemas.profiles import (
+    # ProfileRequestSchema,
     ProfileResponseSchema,
     ProfileBaseSchema
 )

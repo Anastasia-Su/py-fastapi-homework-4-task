@@ -1,6 +1,6 @@
 from typing import Dict, Union
 
-from src.storages import S3StorageInterface
+from storages import S3StorageInterface
 
 
 class FakeS3Storage(S3StorageInterface):

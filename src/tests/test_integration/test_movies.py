@@ -4,8 +4,8 @@ import pytest
 from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 
-from src.database import MovieModel
-from src.database import (
+from database import MovieModel
+from database import (
     GenreModel,
     ActorModel,
     LanguageModel,

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.routes import (
+from routes import (
     movie_router,
     accounts_router,
     profiles_router

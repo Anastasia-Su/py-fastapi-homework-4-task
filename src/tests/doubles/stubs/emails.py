@@ -1,4 +1,4 @@
-from src.notifications import EmailSenderInterface
+from notifications import EmailSenderInterface
 
 
 class StubEmailSender(EmailSenderInterface):

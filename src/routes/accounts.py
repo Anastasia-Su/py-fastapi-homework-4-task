@@ -8,13 +8,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from src.config import (
+from config import (
     get_jwt_auth_manager,
     get_settings,
     BaseAppSettings,
     get_accounts_email_notificator,
 )
-from src.database import (
+from database import (
     get_db,
     UserModel,
     UserGroupModel,
@@ -23,9 +23,9 @@ from src.database import (
     PasswordResetTokenModel,
     RefreshTokenModel,
 )
-from src.exceptions import BaseSecurityError
-from src.notifications import EmailSenderInterface
-from src.schemas import (
+from exceptions import BaseSecurityError
+from notifications import EmailSenderInterface
+from schemas import (
     UserRegistrationRequestSchema,
     UserRegistrationResponseSchema,
     MessageResponseSchema,
@@ -37,7 +37,7 @@ from src.schemas import (
     TokenRefreshRequestSchema,
     TokenRefreshResponseSchema,
 )
-from src.security.interfaces import JWTAuthManagerInterface
+from security.interfaces import JWTAuthManagerInterface
 
 router = APIRouter()
 
@@ -244,7 +244,6 @@ async def activate_account(
     return MessageResponseSchema(message="User account activated successfully.")
 
 
-
 @router.post(
     "/password-reset/request/",
     response_model=MessageResponseSchema,
@@ -292,7 +291,7 @@ async def request_password_reset_token(
     reset_token = PasswordResetTokenModel(user_id=cast(int, user.id))
     db.add(reset_token)
     await db.commit()
-    
+
     background_tasks.add_task(
         email_sender.send_password_reset_email,
         str(user.email),
@@ -400,7 +399,7 @@ async def reset_password(
         user.password = data.password
         await db.run_sync(lambda s: s.delete(token_record))
         await db.commit()
-        
+
         background_tasks.add_task(
             email_sender.send_password_reset_complete_email,
             str(user.email),
@@ -599,10 +598,6 @@ async def refresh_access_token(
     new_access_token = jwt_manager.create_access_token({"user_id": user_id})
 
     return TokenRefreshResponseSchema(access_token=new_access_token)
-
-
-
-
 
 
 @router.get(

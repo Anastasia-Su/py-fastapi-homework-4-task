@@ -6,8 +6,8 @@ from io import BytesIO
 from PIL import Image
 from sqlalchemy import select, func
 
-from src.database import UserModel, UserProfileModel
-from src.exceptions import S3FileUploadError
+from database import UserModel, UserProfileModel
+from exceptions import S3FileUploadError
 
 
 @pytest.mark.asyncio
