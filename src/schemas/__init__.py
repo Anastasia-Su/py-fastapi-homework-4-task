@@ -19,7 +19,6 @@ from src.schemas.accounts import (
 )
 
 from src.schemas.profiles import (
-    ProfileRequestSchema,
     ProfileResponseSchema,
     ProfileBaseSchema
 )
