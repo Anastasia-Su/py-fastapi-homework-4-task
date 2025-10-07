@@ -16,18 +16,11 @@ from schemas import ProfileResponseSchema
 from storages import S3StorageInterface
 from config import get_s3_storage_client
 
-from .utils import get_current_user, get_avatar_presigned_url, validate_profile_data
+from .utils import get_current_user, validate_profile_data
 
 from fastapi import UploadFile, File, Form
 from typing import Optional
 from datetime import date
-
-# from validation import (
-#     validate_name,
-#     validate_image,
-#     validate_gender,
-#     validate_birth_date,
-# )
 
 
 router = APIRouter()
@@ -139,9 +132,4 @@ async def create_profile(
             detail=str(e),
         ) from e
 
-    profile_data = ProfileResponseSchema.model_validate(new_profile)
-
-    # if new_profile.avatar:
-    #     profile_data.avatar = await get_avatar_presigned_url(new_profile.avatar)
-
-    return profile_data
+    return ProfileResponseSchema.model_validate(new_profile)

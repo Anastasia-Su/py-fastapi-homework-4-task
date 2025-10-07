@@ -1,9 +1,8 @@
-import aioboto3
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, status, Request, Security
 from fastapi.security import HTTPBearer
 from security.interfaces import JWTAuthManagerInterface
 from exceptions import BaseSecurityError, TokenExpiredError, InvalidTokenError
-from config import get_jwt_auth_manager, get_settings, BaseAppSettings
+from config import get_jwt_auth_manager
 from security import get_token
 from validation import (
     validate_name,
@@ -19,13 +18,12 @@ bearer_scheme = HTTPBearer(auto_error=False)
 async def get_current_user(
     request: Request,
     jwt_manager: JWTAuthManagerInterface = Depends(get_jwt_auth_manager),
+    credentials=Security(bearer_scheme),
 ):
     token = get_token(request)
     try:
         payload = jwt_manager.decode_access_token(token)
-        print("Decoded payload:", payload)
         user_id = payload.get("user_id")
-        print("Looking up user_id:", user_id)
     except TokenExpiredError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -49,25 +47,6 @@ async def get_current_user(
         )
 
     return user_id
-
-
-async def get_avatar_presigned_url(file_name: str):
-    settings: BaseAppSettings = get_settings()
-    session = aioboto3.Session(
-        aws_access_key_id=settings.S3_STORAGE_ACCESS_KEY,
-        aws_secret_access_key=settings.S3_STORAGE_SECRET_KEY,
-    )
-    async with session.client(
-        "s3",
-        endpoint_url=f"http://{settings.S3_STORAGE_HOST}:{settings.S3_STORAGE_PORT}",
-    ) as s3:
-
-        url = await s3.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": settings.S3_BUCKET_NAME, "Key": file_name},
-            ExpiresIn=3600,
-        )
-        return url
 
 
 async def validate_profile_data(
